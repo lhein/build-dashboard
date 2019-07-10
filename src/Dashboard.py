@@ -86,11 +86,14 @@ def generateHTML(jobName, buildNumber, status, buildUrl, jobUrl):
 app = Flask(__name__, static_folder="../build/static", template_folder="../build")
 @app.route("/")
 def launch():
-	return render_template('index.html', jobList=[ {'name': 'My Job', 'jobUrl': 'http://google.com', 'buildNumber': '#17', 'buildUrl': 'http://redhat.com', 'buildStatus': 'SUCCESS'}, ])
+	return render_template('index.html', MY_TOKEN=[ {'name': 'My Job', 'jobUrl': 'http://google.com', 'buildNumber': '#17', 'buildUrl': 'http://redhat.com', 'buildStatus': 'SUCCESS'}, ])
+@app.route("/static/js/<path:path>")
+def templ(path):
+	return render_template("./static/js/" + path, MY_TOKEN=[ {'name': 'My Job', 'jobUrl': 'http://google.com', 'buildNumber': '#17', 'buildUrl': 'http://redhat.com', 'buildStatus': 'SUCCESS'}, ])
 
 if __name__ == '__main__':
 	app.debug=True
-	app.run(host='0.0.0.0', use_reloader=True, port=5000, threaded=True)
+	app.run(host='0.0.0.0', use_reloader=True, port=50005, threaded=True)
 
 def stale():
 	job_list = []

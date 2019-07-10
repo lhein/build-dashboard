@@ -4,7 +4,8 @@ import './index.css';
 import Dashboard from './Dashboard';
 import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<Dashboard jobs={{jobList}} />, document.getElementById('root'));
+let jobs="{{ MY_TOKEN }}";
+ReactDOM.render(<Dashboard jobs={{ jobs }} />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
