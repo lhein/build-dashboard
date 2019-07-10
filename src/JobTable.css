@@ -1,0 +1,27 @@
+.center-me {
+	text-align: center;
+}
+
+.right-align-me {
+	text-align: right;
+}
+
+table {
+	border: 1px solid black;
+	border-collapse: collapse;
+	padding: 5;
+}
+
+th {
+	height: 50px;
+	background-color: #4CAF50;
+	color: white;
+}
+
+th, td {
+	  padding: 15px;
+}
+
+tr:nth-child(even) {
+	background-color: #f2f2f2;
+}
