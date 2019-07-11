@@ -14,7 +14,7 @@ class JobRow extends React.Component {
 			<tr>
 				<td><a href="{jobUrl}">{jobName}</a></td>
 				<td class="right-align-me"><a href="{buildUrl}">{buildNumber}</a></td>
-				<td class="center-me" style="font-weight:bold">{buildStatus}</td>
+				<td class="center-me" style={{fontWeight: 'bold'}}>{buildStatus}</td>
 			</tr>
 		);
 	}

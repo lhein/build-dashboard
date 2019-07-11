@@ -1,7 +1,7 @@
 import json
 import requests
 from travispy import TravisPy
-from flask import Flask, render_template
+from flask import Flask, render_template, make_response
 
 gitToken = '465c9b9acaeebb56b5b4eef445f6bcf1ddc27bfb'
 fuseJenkins = 'https://fusesource-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
@@ -84,12 +84,17 @@ def generateHTML(jobName, buildNumber, status, buildUrl, jobUrl):
 	return [ jobName, jobUrl, buildUrl, str("#" + buildNumber), buildResult, bgcolor, color ]
 
 app = Flask(__name__, static_folder="../build/static", template_folder="../build")
+
 @app.route("/")
 def launch():
 	return render_template('index.html', MY_TOKEN=[ {'name': 'My Job', 'jobUrl': 'http://google.com', 'buildNumber': '#17', 'buildUrl': 'http://redhat.com', 'buildStatus': 'SUCCESS'}, ])
+
 @app.route("/static/js/<path:path>")
 def templ(path):
-	return render_template("./static/js/" + path, MY_TOKEN=[ {'name': 'My Job', 'jobUrl': 'http://google.com', 'buildNumber': '#17', 'buildUrl': 'http://redhat.com', 'buildStatus': 'SUCCESS'}, ])
+	# mind the correct escaping of the json object. this is required by the double hop in javascript
+	resp = make_response(render_template("./static/js/" + path, MY_TOKEN='[ {\\"name\\": \\"My Job\\", \\"jobUrl\\": \\"http://google.com\\", \\"buildNumber\\": \\"#17\\", \\"buildUrl\\": \\"http://redhat.com\\", \\"buildStatus\\": \\"SUCCESS\\"} ]'))
+	resp.headers['Content-type'] = 'text/javascript'
+	return resp
 
 if __name__ == '__main__':
 	app.debug=True
