@@ -4,9 +4,9 @@ import './index.css';
 import Dashboard from './Dashboard';
 import * as serviceWorker from './serviceWorker';
 
-let token=`{{ MY_TOKEN }}`;
-// parse here is required because it's the only way to have webpack to accept the token we use above. it handles it as string and allows us to have anything in it, even the token.
-let jobs=JSON.parse(token);
+let response = fetch('http://0.0.0.0:50005/ci-jobs/api/v1.0/jobs/');
+let myJson = response.json(); //extract JSON from the http response
+let jobs=JSON.parse(myJson);
 
 //{% raw %}
 ReactDOM.render(<Dashboard jobs={ jobs } />, document.getElementById('root'));
