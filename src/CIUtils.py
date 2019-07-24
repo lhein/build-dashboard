@@ -51,6 +51,20 @@ def isTravisJob(jobName):
 			return True
 	return False
 
+def mapToJenkinsStates(buildResult):
+	mappedState = ""
+	if (buildResult == 'passed'):
+		mappedState = "SUCCESS"
+	elif (buildResult == 'canceled'):
+		mappedState = "ABORTED"
+	elif (buildResult == 'failed'):
+		mappedState = "FAILURE"
+	elif (buildResult == 'errored'):
+		mappedState = "FAILURE"
+	else:
+		mappedState = "UNKNOWN"
+	return mappedState
+
 def getJenkinsJobStatus(serverUrl, jobName):
 	try:
 		jobApiUrl = serverUrl + '/job/' + jobName + '/api/json'
@@ -77,7 +91,7 @@ def getTravisJobStatus(repo, token, jobName):
 		r = t.repo(repo)
 		build = t.build(r.last_build_id)
 		last_build_number = str(build['number'])
-		buildResult = build['state']
+		buildResult = mapToJenkinsStates(build['state'])
 		buildLink = 'https://travis-ci.org/' + r['slug'] + '/builds/' + str(build['id'])
 		jobUrl = 'https://travis-ci.org/' + r['slug'] + '/builds/'
 		return { 'name': jobName, 'buildNumber': str(last_build_number), 'buildStatus': buildResult, 'buildUrl': buildLink, 'jobUrl': jobUrl}

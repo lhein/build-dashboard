@@ -12,9 +12,9 @@ class JobRow extends React.Component {
 
 		return (
 			<tr>
-				<td><a href="{jobUrl}">{jobName}</a></td>
-				<td class="right-align-me"><a href="{buildUrl}">{buildNumber}</a></td>
-				<td class="center-me" style={{fontWeight: 'bold'}}>{buildStatus}</td>
+				<td><a href={jobUrl}>{jobName}</a></td>
+				<td class="right-align-me"><a href={buildUrl}>{buildNumber}</a></td>
+				<td class={`center-me buildstatus ${buildStatus}`}>{buildStatus}</td>
 			</tr>
 		);
 	}

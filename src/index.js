@@ -10,7 +10,6 @@ fetch('http://0.0.0.0:50005/ci-jobs/api/v1.0/jobs/')
 		return response.json();
   	})
   	.then(function(myJson) {
-		console.log(JSON.stringify(myJson));
 		let jobs = myJson.jobs;
 		ReactDOM.render(<Dashboard jobs={ jobs } />, document.getElementById('root'));
   	});

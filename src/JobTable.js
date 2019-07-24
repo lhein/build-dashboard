@@ -15,7 +15,7 @@ class JobTable extends React.Component {
 		});
 
 		return (
-			<table>
+			<table class="center-me">
 				<thead>
 					<tr>
 						<th>Jobname</th>
