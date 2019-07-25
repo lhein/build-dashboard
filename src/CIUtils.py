@@ -1,8 +1,9 @@
+import os
 import json
 import requests
 from travispy import TravisPy
 
-gitToken = '465c9b9acaeebb56b5b4eef445f6bcf1ddc27bfb'
+gitToken = os.environ['GITHUB_TRAVIS_TOKEN']
 fuseJenkins = 'https://fusesource-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
 devToolsJenkins = 'https://dev-platform-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
 

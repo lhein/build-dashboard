@@ -4,6 +4,21 @@ This application shows a dashboard to visualize the status of all relevant build
 
 
 ## Quick-start
+
+Define an environment variable to hold your github oauth token called _GITHUB_TRAVIS_TOKEN_
+
+```bash
+export GITHUB_TRAVIS_TOKEN="<enter your token here>"
+```
+
+Make sure your [GitHub Token](https://github.com/settings/tokens) has the following scopes...
+```bash
+"read:org", "user:email", "repo_deployment", "repo:status", "write:repo_hook"
+```
+
+Now continue to setup, build and launch the project...
+
+
 ```bash
 npm install yarn -g # ensure you have yarn on your machine globally
 git clone https://github.com/lhein/build-dashboard.git # clone the project
