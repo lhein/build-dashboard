@@ -25,7 +25,7 @@ import {
 	OutlinedHandPaperIcon,
 	SpinnerAltIcon,
 } from '@patternfly/react-icons';
-
+import loader from '@app/loader.gif';
 
 function useApi(url, initialValue) {
 	const [data, setData] = useState(initialValue);
@@ -107,7 +107,7 @@ const Dashboard: React.FunctionComponent = () => {
 				<TableHeader />
 				<TableBody />
 			</Table>
-			{jobs.length === 0 && <div><br/><br/><center><SpinnerAltIcon key="icon" />&nbsp;Loading...</center></div>}
+			{jobs.length === 0 && <div><br/><br/><center><img src={loader} alt="Content loading "/></center></div>}
 		</PageSection>
 	);
 }
