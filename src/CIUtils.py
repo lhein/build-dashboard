@@ -3,7 +3,10 @@ import json
 import requests
 from travispy import TravisPy
 
-gitToken = os.environ['GITHUB_TRAVIS_TOKEN']
+ENV_VAR_NAME = 'GITHUB_TRAVIS_TOKEN'
+ENV_VAR_UNDEFINED = 'UNDEFINED'
+gitToken = os.getenv(ENV_VAR_NAME, ENV_VAR_UNDEFINED)
+
 fuseJenkins = 'https://fusesource-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
 devToolsJenkins = 'https://dev-platform-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
 
@@ -36,6 +39,9 @@ TRAVIS_JOBS = {
     'vscode-camelk': 'camel-tooling/vscode-camelk',
     'vscode-camel-extension-pack': 'camel-tooling/vscode-camel-extension-pack'
 }
+
+def hasGithubTokenDefined():
+	return gitToken != ENV_VAR_UNDEFINED
 
 def isFuseJenkinsJob(jobName):
 	job = [job for job in FUSE_JENKINS_JOBS if job == jobName]
