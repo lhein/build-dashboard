@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Alert, PageSection } from '@patternfly/react-core';
+import { PageSection } from '@patternfly/react-core';
 import { JobTable } from './JobTable';
 
 function useApi(url, initialValue) {
@@ -14,7 +14,11 @@ function useApi(url, initialValue) {
   );
 
   useEffect(() => {
-    setTimeout(readApi, 500);
+    readApi();
+    const runner = setInterval(readApi, 60000);
+    return () => {
+      clearInterval(runner);
+    };
   }, [url, readApi]);
 
   return data;

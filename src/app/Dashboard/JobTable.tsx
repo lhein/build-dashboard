@@ -21,6 +21,9 @@ const columns = [
   },
   {
     title: 'State'
+  },
+  {
+    title: ''
   }
 ];
 
@@ -113,36 +116,21 @@ function toTableRow(job) {
   return row;
 }
 
+async function queryJob(jobName) {
+  const JOB_SERVICE_URL = 'http://0.0.0.0:50005/ci-jobs/api/v1.0/jobs/' + jobName;
+  const result = await fetch(JOB_SERVICE_URL, { mode: 'cors' });
+  const resultObj = await result.json();
+  return resultObj.job;
+}
+
 const JobTable: React.FunctionComponent<{ data: any[] }> = ({ data }) => {
   const [sortBy, setSortBy] = useState<any>({});
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
-  const [isAllSelected, setIsAllSelected] = useState<boolean>(false);
-
-  const onSelect = (event, isSelected, rowIdx, rowData) => {
-    if (rowIdx === -1) {
-      setSelectedRows([]);
-      setIsAllSelected(isSelected);
-    } else if (isSelected) {
-      setSelectedRows(Array.from(new Set([...selectedRows, rowData.rowKey])));
-      setIsAllSelected(false);
-    } else {
-      setSelectedRows(selectedRows.filter(name => name !== rowData.rowKey));
-      setIsAllSelected(false);
-    }
-  };
 
   const onSort = (event, index, direction) => {
     setSortBy({
       index,
       direction
     });
-  };
-
-  const setIsSelected = row => {
-    return {
-      ...row,
-      selected: isAllSelected || !!selectedRows.find(name => name === row.name)
-    };
   };
 
   const sortRows = (a, b) => {
@@ -155,19 +143,30 @@ const JobTable: React.FunctionComponent<{ data: any[] }> = ({ data }) => {
     }
   };
 
-  const rows = data
-    .map(setIsSelected)
-    .sort(sortRows)
-    .map(toTableRow);
+  const reloadJob = (event, rowId, rowData, extra) => {
+    const jobName = rowData.rowKey;
+    const freshJob = queryJob(jobName);
+    const newRow = toTableRow(freshJob);
+    rows.splice(rowId, 1, newRow);
+  };
+
+  const rows = data.sort(sortRows).map(toTableRow);
 
   const jobsInTrouble = rows.filter(row => {
     return row.trouble === true;
   }).length;
 
+  const actions = [
+    {
+      title: 'Reload',
+      onClick: reloadJob
+    }
+  ];
+
   return (
     <div>
       {jobsInTrouble > 0 && <Alert variant="warning" isInline={true} title={`${jobsInTrouble} job(s) in trouble!`} />}
-      <Table variant="compact" cells={columns} rows={rows} onSelect={onSelect} sortBy={sortBy} onSort={onSort}>
+      <Table variant="compact" cells={columns} rows={rows} actions={actions} sortBy={sortBy} onSort={onSort}>
         <TableHeader />
         <TableBody />
       </Table>
