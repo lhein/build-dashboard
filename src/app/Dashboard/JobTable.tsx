@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Alert } from '@patternfly/react-core';
-import { StyledText } from '@patternfly/react-styled-system';
+import { PatternFlyThemeProvider, StyledConstants, StyledBox, StyledText } from '@patternfly/react-styled-system';
 import {
   Table,
   TableHeader,
@@ -8,14 +8,15 @@ import {
   sortable,
   SortByDirection,
   TableVariant,
-  textCenter
+  textCenter,
 } from '@patternfly/react-table';
 import {
   OutlinedCheckCircleIcon,
   OutlinedQuestionCircleIcon,
   OutlinedTimesCircleIcon,
   OutlinedGrimaceIcon,
-  OutlinedHandPaperIcon
+  OutlinedHandPaperIcon,
+  SpinnerAltIcon,
 } from '@patternfly/react-icons';
 import loader from '@app/loader.gif';
 
@@ -36,101 +37,53 @@ const columns = [
   }
 ];
 
-function toRow(job) {
-  const jobName = job.name;
-  const jobUrl = job.jobUrl;
-  const buildNumber = job.buildNumber;
-  const buildUrl = job.buildUrl;
-  const buildStatus = job.buildStatus;
+function toTableRow(job) {
+  let jobName = job.name;
+  let jobUrl = job.jobUrl;
+  let buildNumber = job.buildNumber;
+  let buildUrl = job.buildUrl;
+  let buildStatus = job.buildStatus;
 
-  const row = [];
+  let row = [];
 
-  row.push({ title: <a href={jobUrl}>{jobName}</a> });
+  row.push({ title: <a href={jobUrl}>{jobName}</a> })
   row.push({ title: <a href={buildUrl}>{buildNumber}</a> });
 
   if (buildStatus === 'SUCCESS') {
-    row.push({
-      title: (
-        <React.Fragment>
-          <StyledText fontWeight="bold" color="#486b00">
-            <OutlinedCheckCircleIcon key="icon" />
-            &nbsp;{buildStatus}
-          </StyledText>
-        </React.Fragment>
-      )
-    });
+    row.push({ title: (<React.Fragment><StyledText fontWeight="bold" color="#486b00"><OutlinedCheckCircleIcon key="icon" />&nbsp;{buildStatus}</StyledText></React.Fragment>) });
   } else if (buildStatus === 'FAILURE') {
-    row.push({
-      title: (
-        <React.Fragment>
-          <StyledText fontWeight="bold" color="#c9190b">
-            <OutlinedTimesCircleIcon key="icon" />
-            &nbsp;{buildStatus}
-          </StyledText>
-        </React.Fragment>
-      )
-    });
+    row.push({ title: (<React.Fragment><StyledText fontWeight="bold" color="#c9190b"><OutlinedTimesCircleIcon key="icon" />&nbsp;{buildStatus}</StyledText></React.Fragment>) });
   } else if (buildStatus === 'ABORTED') {
-    row.push({
-      title: (
-        <React.Fragment>
-          <StyledText fontWeight="bold" color="#004368">
-            <OutlinedHandPaperIcon key="icon" />
-            &nbsp;{buildStatus}
-          </StyledText>
-        </React.Fragment>
-      )
-    });
+    row.push({ title: (<React.Fragment><StyledText fontWeight="bold" color="#004368"><OutlinedHandPaperIcon key="icon" />&nbsp;{buildStatus}</StyledText></React.Fragment>) });
   } else if (buildStatus === 'UNSTABLE') {
-    row.push({
-      title: (
-        <React.Fragment>
-          <StyledText fontWeight="bold" color="#795600">
-            <OutlinedGrimaceIcon key="icon" />
-            &nbsp;{buildStatus}
-          </StyledText>
-        </React.Fragment>
-      )
-    });
+    row.push({ title: (<React.Fragment><StyledText fontWeight="bold" color="#795600"><OutlinedGrimaceIcon key="icon" />&nbsp;{buildStatus}</StyledText></React.Fragment>) });
   } else if (buildStatus === 'NOT_BUILT') {
-    row.push({
-      title: (
-        <React.Fragment>
-          <StyledText fontWeight="bold" color="#151515">
-            <OutlinedQuestionCircleIcon key="icon" />
-            &nbsp;{buildStatus}
-          </StyledText>
-        </React.Fragment>
-      )
-    });
+    row.push({ title: (<React.Fragment><StyledText fontWeight="bold" color="#151515"><OutlinedQuestionCircleIcon key="icon" />&nbsp;{buildStatus}</StyledText></React.Fragment>) });
   } else {
-    row.push({
-      title: (
-        <React.Fragment>
-          <StyledText fontWeight="bold" color="#151515">
-            <OutlinedQuestionCircleIcon key="icon" />
-            &nbsp;{buildStatus}
-          </StyledText>
-        </React.Fragment>
-      )
-    });
+    row.push({ title: (<React.Fragment><StyledText fontWeight="bold" color="#151515"><OutlinedQuestionCircleIcon key="icon" />&nbsp;{buildStatus}</StyledText></React.Fragment>) });
   }
+
+  row.rowKey = jobName;
+  row.selected = job.selected;
 
   return row;
 }
 
-const JobTable: React.FunctionComponent = ({ data }) => {
-  let rows = [];
-  const [sortBy, setSortBy] = useState({});
-  const [selectedRows, setSelectedRows] = useState([]);
+const JobTable: React.FunctionComponent<{ data: any[] }> = ({ data }) => {
+  const [sortBy, setSortBy] = useState<any>({});
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
-  const onSelect = (event, isSelected, rowId, rowData, extraData) => {
+  const onSelect = (event, isSelected, rowIdx, rowData) => {
     if (isSelected) {
-      setSelectedRows(Array.from(new Set([...selectedRows, rowId])));
+      setSelectedRows(
+        Array.from(new Set([...selectedRows, rowData.rowKey]))
+      );
     } else {
-      setSelectedRows(selectedRows.filter(id => id === rowId));
+      setSelectedRows(
+        selectedRows.filter(name => name !== rowData.rowKey)
+      )
     }
-  };
+  }
 
   const onSort = (_event, index, direction) => {
     setSortBy({
@@ -139,44 +92,40 @@ const JobTable: React.FunctionComponent = ({ data }) => {
     });
   };
 
-  const setIsSelected = row => {
-    console.log(row);
+  const setIsSelected = (row) => {
     return {
       ...row,
-      isSelected: selectedRows.find(row.id) ? true : false
-    };
+      selected: !!selectedRows.find(name => name === row.name)
+    }
   };
 
   const sortRows = (a, b) => {
-    // rows: direction === SortByDirection.asc ? sortedRows : sortedRows.reverse()
-    a.name.localeCompare(b.name);
+    if (sortBy.direction === 'asc') {
+      return a.name.localeCompare(b.name)
+    } else if (sortBy.direction === 'desc') {
+      return b.name.localeCompare(a.name)
+    } else {
+      return 0;
+    }
   };
 
-  rows = data
-    .map(toRow)
+  const rows = data
     .map(setIsSelected)
-    .sort(sortRows);
+    .sort(sortRows)
+    .map(toTableRow);
 
   const jobsInTrouble = 0;
 
   return (
     <div>
-      {jobsInTrouble > 0 && <Alert variant="warning" isInline={true} title="There are jobs in trouble!" />}
-      <Table variant="compact" cells={columns} rows={rows} onSelect={onSelect} sortBy={sortBy} onSort={onSort}>
+      { jobsInTrouble > 0 && <Alert variant="warning" isInline title='There are jobs in trouble!' /> }
+      <Table variant="compact" cells={columns} rows={rows} onSelect={onSelect} sortBy={sortBy} onSort={onSort} >
         <TableHeader />
         <TableBody />
       </Table>
-      {data.length === 0 && (
-        <div>
-          <br />
-          <br />
-          <center>
-            <img src={loader} alt="Content loading " />
-          </center>
-        </div>
-      )}
+      {data.length === 0 && <div><br/><br/><center><img src={loader} alt="Content loading "/></center></div>}
     </div>
   );
-};
+}
 
 export { JobTable };
