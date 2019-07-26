@@ -23,6 +23,7 @@ Now continue to setup, build and launch the project...
 npm install yarn -g # ensure you have yarn on your machine globally
 git clone https://github.com/lhein/build-dashboard.git # clone the project
 cd build-dashboard # navigate into the project directory
+pip install -r python-requirements.txt # install the python required libraries
 yarn # install patternfly-react-seed dependencies
 yarn build # build the project
 python src/CIBackendService.py # start the rest api for retrieving the job data
