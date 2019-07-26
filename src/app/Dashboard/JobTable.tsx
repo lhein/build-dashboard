@@ -72,18 +72,24 @@ function toTableRow(job) {
 const JobTable: React.FunctionComponent<{ data: any[] }> = ({ data }) => {
   const [sortBy, setSortBy] = useState<any>({});
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [isAllSelected, setIsAllSelected] = useState<boolean>(false);
 
   const onSelect = (event, isSelected, rowIdx, rowData) => {
-    if (isSelected) {
+    if (rowIdx === -1) {
+      setSelectedRows([]);
+      setIsAllSelected(isSelected);
+    } else if (isSelected) {
       setSelectedRows(
         Array.from(new Set([...selectedRows, rowData.rowKey]))
       );
+      setIsAllSelected(false);
     } else {
       setSelectedRows(
         selectedRows.filter(name => name !== rowData.rowKey)
       )
+      setIsAllSelected(false);
     }
-  }
+  };
 
   const onSort = (_event, index, direction) => {
     setSortBy({
@@ -95,7 +101,7 @@ const JobTable: React.FunctionComponent<{ data: any[] }> = ({ data }) => {
   const setIsSelected = (row) => {
     return {
       ...row,
-      selected: !!selectedRows.find(name => name === row.name)
+      selected: isAllSelected || !!selectedRows.find(name => name === row.name)
     }
   };
 
