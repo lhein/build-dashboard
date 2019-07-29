@@ -34,8 +34,13 @@ module.exports = {
         // if they live under a 'fonts' or 'pficon' directory
         include: [
           path.resolve(__dirname, 'node_modules/patternfly/dist/fonts'),
-          path.resolve(__dirname, 'node_modules/@patternfly/react-core/dist/styles/assets/fonts'),
-          path.resolve(__dirname, 'node_modules/@patternfly/react-core/dist/styles/assets/pficon'),
+		  path.resolve(__dirname, 'node_modules/@patternfly/react-core/dist/styles/assets/fonts'),
+		  path.resolve(__dirname, 'node_modules/@patternfly/react-core/dist/styles/assets/pficon'),
+		  path.resolve(__dirname, 'node_modules/@patternfly/react-table/dist/styles/assets/images'),
+		  path.resolve(__dirname, 'node_modules/@patternfly/react-table/dist/styles/assets/fonts/overpass-mono-webfont'),
+		  path.resolve(__dirname, 'node_modules/@patternfly/react-table/dist/styles/assets/fonts/overpass-webfont'),
+		  path.resolve(__dirname, 'node_modules/@patternfly/react-table/dist/styles/assets/fonts/RedHatDisplay'),
+		  path.resolve(__dirname, 'node_modules/@patternfly/react-table/dist/styles/assets/fonts/RedHatText'),
         ],
         use: {
           loader: 'file-loader',
@@ -93,7 +98,9 @@ module.exports = {
           path.resolve(__dirname, 'node_modules/patternfly'),
           path.resolve(__dirname, 'node_modules/@patternfly/patternfly/assets'),
           path.resolve(__dirname, 'node_modules/@patternfly/react-core/dist/styles/assets/images'),
-          path.resolve(__dirname, 'node_modules/@patternfly/react-styles/css/assets/images')
+		  path.resolve(__dirname, 'node_modules/@patternfly/react-styles/css/assets/images'),
+		  
+		  path.resolve(__dirname, 'node_modules/@patternfly/react-table/dist/styles/assets/images')
         ],
         use: [
           {
