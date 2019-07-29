@@ -116,14 +116,7 @@ function toTableRow(job) {
   return row;
 }
 
-async function queryJob(jobName) {
-  const JOB_SERVICE_URL = 'http://0.0.0.0:50005/ci-jobs/api/v1.0/jobs/' + jobName;
-  const result = await fetch(JOB_SERVICE_URL, { mode: 'cors' });
-  const resultObj = await result.json();
-  return resultObj.job;
-}
-
-const JobTable: React.FunctionComponent<{ data: any[] }> = ({ data }) => {
+const JobTable: React.FunctionComponent<{ data: any[], onJobReload: (jobName: string)=> void }> = ({ data, onJobReload }) => {
   const [sortBy, setSortBy] = useState<any>({});
 
   const onSort = (event, index, direction) => {
@@ -145,9 +138,7 @@ const JobTable: React.FunctionComponent<{ data: any[] }> = ({ data }) => {
 
   const reloadJob = (event, rowId, rowData, extra) => {
     const jobName = rowData.rowKey;
-    const freshJob = queryJob(jobName);
-    const newRow = toTableRow(freshJob);
-    rows.splice(rowId, 1, newRow);
+	onJobReload(jobName);
   };
 
   const rows = data.sort(sortRows).map(toTableRow);

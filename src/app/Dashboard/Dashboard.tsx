@@ -20,17 +20,54 @@ function useApi(url, initialValue) {
       clearInterval(runner);
     };
   }, [url, readApi]);
-
+ 
   return data;
 }
 
 const Dashboard: React.FunctionComponent = () => {
   const JOBS_SERVICE_URL = 'http://0.0.0.0:50005/ci-jobs/api/v1.0/jobs/';
   const jobs = useApi(JOBS_SERVICE_URL, []);
+  const [fetchedJobs, setFetchedJobs] = useState([]);
+
+  const handleJobReload = useCallback(
+	async function(jobName) {
+  	  let fj = [...fetchedJobs];
+      const JOB_SERVICE_URL = 'http://0.0.0.0:50005/ci-jobs/api/v1.0/jobs/' + jobName;
+	  const result = await fetch(JOB_SERVICE_URL, { mode: 'cors' });
+	  const resultObj = await result.json();
+	  let job = resultObj.job;
+	
+	  let idx = fetchedJobs.findIndex( (element) => {
+		return element.name === job.name;
+	  });
+	  if (idx!==-1) {
+		fj.splice(idx, 1, job);
+	  } else {
+		fj.push(job);
+	  }  
+	  setFetchedJobs(fj);
+	}
+  );
+
+  // drop patches when the all jobs data changes, which means that the interval triggered
+  useEffect( () => {
+   setFetchedJobs( [] );
+  }, [jobs, setFetchedJobs]);
+
+  // patch jobs
+  let patchedJobs = jobs.map( (currentValue, index, arr) => {
+	  let idx = fetchedJobs.findIndex( (element) => {
+		return element.name === currentValue.name;
+	  });
+	  if (idx !== -1) {
+		  return fetchedJobs[idx];
+	  }
+	  return currentValue;
+  });
 
   return (
     <PageSection>
-      <JobTable data={jobs} />
+      <JobTable data={patchedJobs} onJobReload={handleJobReload} />
     </PageSection>
   );
 };
