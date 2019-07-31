@@ -2,7 +2,7 @@ FROM archlinux/base
 MAINTAINER Lars Heinemann
 
 RUN pacman -Syyu --noconfirm
-RUN pacman -S --noconfirm gcc git python python-pip nodejs yarn npm nano nginx
+RUN pacman -S --noconfirm gcc git python python-pip nodejs yarn npm nginx nano
 
 WORKDIR /app
 RUN git clone https://github.com/lhein/build-dashboard.git
