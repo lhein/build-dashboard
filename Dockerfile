@@ -24,8 +24,10 @@ RUN mkdir -p /var/lib/nginx/proxy
 RUN mkdir -p /var/lib/nginx/scgi
 RUN mkdir -p /var/lib/nginx/uwsgi
 RUN chown -R http:root /var/lib/nginx
-RUN mkdir -p /var/log/nginx
-RUN touch /var/log/nginx/access.log
+
+# Forward request logs to Docker log collector
+RUN ln -sf /dev/stdout /var/log/nginx/access.log \
+ && ln -sf /dev/stderr /var/log/nginx/error.log
 
 EXPOSE 80 9000 443 50005
 
