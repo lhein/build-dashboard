@@ -18,6 +18,13 @@ RUN chmod -R a+rwx /app/build-dashboard &&\
     chmod +x /app/build-dashboard/startService.sh
 RUN cp -R dist/* /usr/share/nginx/html/
 
+RUN mkdir /var/lib/nginx/client-body
+RUN mkdir /var/lib/nginx/fastcgi
+RUN mkdir /var/lib/nginx/proxy
+RUN mkdir /var/lib/nginx/scgi
+RUN mkdir /var/lib/nginx/uwsgi
+RUN chown -R http:root /var/lib/nginx
+
 EXPOSE 80 9000 443 50005
 
 ENV LANG=en_US.UTF-8 \
