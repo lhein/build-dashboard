@@ -1,4 +1,4 @@
-FROM archlinux/base as archImage
+FROM archlinux/base
 MAINTAINER Lars Heinemann
 
 RUN pacman -Syyu --noconfirm
