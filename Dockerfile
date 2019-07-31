@@ -24,6 +24,8 @@ RUN mkdir -p /var/lib/nginx/proxy
 RUN mkdir -p /var/lib/nginx/scgi
 RUN mkdir -p /var/lib/nginx/uwsgi
 RUN chown -R http:root /var/lib/nginx
+RUN mkdir -p /var/log/nginx
+RUN touch /var/log/nginx/access.log
 
 EXPOSE 80 9000 443 50005
 
