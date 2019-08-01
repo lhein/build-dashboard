@@ -25,14 +25,18 @@ function useApi(url, initialValue) {
 }
 
 const Dashboard: React.FunctionComponent = () => {
-  const JOBS_SERVICE_URL = 'http://0.0.0.0:50005/ci-jobs/api/v1.0/jobs/';
+  let restAPIProvider = process.env.REST_BACKEND_URL;
+  if (!restAPIProvider) {
+    restAPIProvider = 'http://0.0.0.0:50005';
+  }
+  const JOBS_SERVICE_URL = restAPIProvider + '/ci-jobs/api/v1.0/jobs/';
   const jobs = useApi(JOBS_SERVICE_URL, []);
   const [fetchedJobs, setFetchedJobs] = useState([]);
 
   const handleJobReload = useCallback(
 	async function(jobName) {
   	  let fj = [...fetchedJobs];
-      const JOB_SERVICE_URL = 'http://0.0.0.0:50005/ci-jobs/api/v1.0/jobs/' + jobName;
+      const JOB_SERVICE_URL = JOBS_SERVICE_URL + jobName;
 	  const result = await fetch(JOB_SERVICE_URL, { mode: 'cors' });
 	  const resultObj = await result.json();
 	  let job = resultObj.job;
