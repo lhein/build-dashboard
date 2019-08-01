@@ -95,14 +95,32 @@ def getTravisJobStatus(repo, token, jobName):
 	try:
 		t = TravisPy.github_auth(token)
 		r = t.repo(repo)
-		build = t.build(r.last_build_id)
-		last_build_number = str(build['number'])
-		buildResult = mapToJenkinsStates(build['state'])
+		branch = t.branch('master', r.slug)
+		last_build_number = branch.number
+		build = t.builds(slug=r.slug, number=last_build_number, event_type='push').pop()
+		buildResult = mapToJenkinsStates(branch['state'])
 		buildLink = 'https://travis-ci.org/' + r['slug'] + '/builds/' + str(build['id'])
 		jobUrl = 'https://travis-ci.org/' + r['slug'] + '/builds/'
 		return { 'name': jobName, 'buildNumber': str(last_build_number), 'buildStatus': buildResult, 'buildUrl': buildLink, 'jobUrl': jobUrl}
 	except Exception as e:
 		return { 'name': jobName, 'buildNumber': 'UNKNOWN', 'buildStatus': 'UNKNOWN', 'buildUrl': '', 'jobUrl': 'https://travis-ci.org/' + repo + '/builds/'}
+
+def getAllJobNames():
+	names = []
+
+	# get all the results from the Fuse Jenkins
+	for job in FUSE_JENKINS_JOBS:
+		names.append( job )
+
+	# get all the results from the DevTools Jenkins
+	for job in DEVTOOLS_JENKINS_JOBS:
+		names.append( job )
+
+	# get all the results from Travis
+	for job, repo in TRAVIS_JOBS.items():
+		names.append( job )
+	
+	return names
 
 def getAllJobs():
 	job_list = []
