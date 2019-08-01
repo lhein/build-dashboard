@@ -2,22 +2,28 @@ FROM archlinux/base
 MAINTAINER Lars Heinemann
 
 RUN pacman -Syyu --noconfirm
-RUN pacman -S --noconfirm gcc git python python-pip nodejs yarn npm nginx nano
+RUN pacman -S --noconfirm gcc git python python-pip nodejs yarn nano nginx npm
 
 WORKDIR /app
-RUN git clone https://github.com/lhein/build-dashboard.git
+RUN git clone https://github.com/lhein/build-dashboard.git build-dashboard
+RUN pip install -r build-dashboard/requirements.txt
 RUN pip install -r build-dashboard/requirements.txt
 
+WORKDIR /app/build-dashboard
 WORKDIR /app/build-dashboard
 
 RUN npm install yarn
 RUN yarn
 RUN yarn build
+RUN yarn build
 
 COPY ./nginx.conf /etc/nginx/nginx.conf
 RUN chmod -R a+rwx /app/build-dashboard &&\
     chmod +x /app/build-dashboard/startService.sh
+
 RUN cp -R dist/* /usr/share/nginx/html/
+RUN cp -Ruf dist/* /usr/share/nginx/html/
+
 
 RUN mkdir -p /var/lib/nginx/client-body
 RUN mkdir -p /var/lib/nginx/fastcgi
