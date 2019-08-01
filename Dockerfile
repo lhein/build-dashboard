@@ -5,12 +5,15 @@ RUN pacman -Syyu --noconfirm
 RUN pacman -S --noconfirm gcc git python python-pip nodejs yarn npm nginx nano
 
 WORKDIR /app
-RUN git clone https://github.com/lhein/build-dashboard.git
+RUN git clone https://github.com/lhein/build-dashboard.git build-dashboard
 RUN pip install -r build-dashboard/requirements.txt
 
 WORKDIR /app/build-dashboard
+
 RUN npm install yarn
+
 RUN yarn
+
 RUN yarn build
 
 COPY ./nginx.conf /etc/nginx/nginx.conf
