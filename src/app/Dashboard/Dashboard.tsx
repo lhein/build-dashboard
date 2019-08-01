@@ -14,8 +14,9 @@ function useApi(url, initialValue) {
   );
 
   useEffect(() => {
-    readApi();
-    const runner = setInterval(readApi, 60000);
+	readApi();
+	// set a 5 minute timer for refresh
+    const runner = setInterval(readApi, 300000); 
     return () => {
       clearInterval(runner);
     };

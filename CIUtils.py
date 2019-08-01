@@ -75,7 +75,7 @@ def getJenkinsJobStatus(serverUrl, jobName):
 	try:
 		jobApiUrl = serverUrl + '/job/' + jobName + '/api/json'
 		jobUrl = serverUrl + '/job/' + jobName
-		response = requests.get(jobApiUrl, verify=False)
+		response = requests.get(jobApiUrl, verify=False, timeout=5)
 		jobStatus = json.loads(response.text)
 		color = jobStatus['color']
 		last_build_number = jobStatus['lastCompletedBuild']['number']
