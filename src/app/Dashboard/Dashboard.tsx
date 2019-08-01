@@ -25,9 +25,9 @@ function useApi(url, initialValue) {
 }
 
 const Dashboard: React.FunctionComponent = () => {
-  let restAPIProvider = process.env.REST_BACKEND_URL;
+  let restAPIProvider = process.env.BACKEND;
   if (!restAPIProvider) {
-    restAPIProvider = 'http://0.0.0.0:50005';
+    restAPIProvider = 'http://python-rest-api-fuse-dashboard.int.open.paas.redhat.com';
   }
   const JOBS_SERVICE_URL = restAPIProvider + '/ci-jobs/api/v1.0/jobs/';
   const jobs = useApi(JOBS_SERVICE_URL, []);
