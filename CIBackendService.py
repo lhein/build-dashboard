@@ -5,13 +5,13 @@ import CIUtils
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/ci-jobs/api/v1.0/jobnames/', methods=['GET'])
-def get_job_names():
-	return jsonify({'jobnames': CIUtils.getAllJobNames()})
-
 @app.route('/ci-jobs/api/v1.0/jobs/', methods=['GET'])
-def get_jobs():
-	return jsonify({'jobs': CIUtils.getAllJobs()})
+def get_job_names():
+	return jsonify({'jobs': CIUtils.getAllJobNames()})
+
+#@app.route('/ci-jobs/api/v1.0/jobs/', methods=['GET'])
+#def get_jobs():
+#	return jsonify({'jobs': CIUtils.getAllJobs()})
 
 @app.route('/ci-jobs/api/v1.0/jobs/<string:jobName>', methods=['GET'])
 def get_job(jobName):

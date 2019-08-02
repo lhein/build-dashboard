@@ -2,38 +2,35 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { PageSection } from '@patternfly/react-core';
 import { JobTable } from './JobTable';
 
-function useApi(url, initialValue) {
-  const [data, setData] = useState(initialValue);
-  const readApi = useCallback(
-    async function() {
-      const result = await fetch(url, { mode: 'cors' });
-      const resultObj = await result.json();
-      setData(resultObj.jobs);
-    },
-    [url]
-  );
-
-  useEffect(() => {
-	readApi();
-	// set a 5 minute timer for refresh
-    const runner = setInterval(readApi, 300000); 
-    return () => {
-      clearInterval(runner);
-    };
-  }, [url, readApi]);
- 
-  return data;
-}
-
 const Dashboard: React.FunctionComponent = () => {
   let restAPIProvider = process.env.BACKEND;
+  restAPIProvider = 'http://0.0.0.0:50005';
   if (!restAPIProvider) {
     restAPIProvider = 'http://python-rest-api-fuse-dashboard.int.open.paas.redhat.com';
   }
-  const JOBS_SERVICE_URL = restAPIProvider + '/ci-jobs/api/v1.0/jobs/';
-  const jobs = useApi(JOBS_SERVICE_URL, []);
-  const [fetchedJobs, setFetchedJobs] = useState([]);
 
+  const JOBS_SERVICE_URL = restAPIProvider + '/ci-jobs/api/v1.0/jobs/';
+  const [jobNames, setJobNames] = useState( [] );
+  const readApi = useCallback(
+    async function() {
+      const result = await fetch(JOBS_SERVICE_URL, { mode: 'cors' });
+      const resultObj = await result.json();
+      setJobNames(resultObj.jobs);
+    }
+  );
+  
+  useEffect(() => {
+	readApi();
+
+	// set a 5 minute timer for refresh
+    const runner = setInterval(readApi, 300000); 
+	
+	return () => {
+      clearInterval(runner);
+    };
+  }, [JOBS_SERVICE_URL, readApi]);
+
+  const [fetchedJobs, setFetchedJobs] = useState([]);
   const handleJobReload = useCallback(
 	async function(jobName) {
   	  let fj = [...fetchedJobs];
@@ -53,16 +50,28 @@ const Dashboard: React.FunctionComponent = () => {
 	  setFetchedJobs(fj);
 	}
   );
-
   // drop patches when the all jobs data changes, which means that the interval triggered
   useEffect( () => {
    setFetchedJobs( [] );
-  }, [jobs, setFetchedJobs]);
+  }, [jobNames, setFetchedJobs]);
+
+  const fetchJobData = useCallback(
+	async function() {
+	  for (let jobName of jobNames) {
+		  handleJobReload(jobName);
+	  }
+	},
+	[jobNames]
+  );
+
+  useEffect(() => {
+    fetchJobData();
+  }, [jobNames, fetchJobData]);
 
   // patch jobs
-  let patchedJobs = jobs.map( (currentValue, index, arr) => {
+  let patchedJobs = jobNames.map( (currentValue, index, arr) => {
 	  let idx = fetchedJobs.findIndex( (element) => {
-		return element.name === currentValue.name;
+		return element.name === currentValue;
 	  });
 	  if (idx !== -1) {
 		  return fetchedJobs[idx];

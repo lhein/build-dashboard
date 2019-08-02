@@ -105,6 +105,9 @@ def getTravisJobStatus(repo, token, jobName):
 	except Exception as e:
 		return { 'name': jobName, 'buildNumber': 'UNKNOWN', 'buildStatus': 'UNKNOWN', 'buildUrl': '', 'jobUrl': 'https://travis-ci.org/' + repo + '/builds/'}
 
+def getJobSkeleton(jobname):
+	return { 'name': jobname, 'buildNumber': 'UNKNOWN', 'buildStatus': 'UNKNOWN', 'buildUrl': '', 'jobUrl': ''}
+
 def getAllJobNames():
 	names = []
 
