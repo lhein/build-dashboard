@@ -7,8 +7,8 @@ async function callApi(url) {
   return await response.json();
 }
 
-function useJobs(baseUrl: string): [any[], (jobName: string) => Promise<void>] {
-  const JOBS_SERVICE_URL = baseUrl + '/ci-jobs/api/v1.0/jobs/';
+function useJobs(): [any[], (jobName: string) => Promise<void>] {
+  const JOBS_SERVICE_URL = '/ci-jobs/api/v1.0/jobs/';
   const [allJobs, setAllJobs] = useState<string[]>([]);
   const [fetchedJobs, setFetchedJobs] = useState<{ [key: string]: any }>({});
 
@@ -55,8 +55,7 @@ function useJobs(baseUrl: string): [any[], (jobName: string) => Promise<void>] {
 }
 
 const Dashboard: React.FunctionComponent = () => {
-  const baseUrl = !process.env.BACKEND ? 'http://0.0.0.0:50005' : 'http://python-rest-api-fuse-dashboard.int.open.paas.redhat.com';
-  const [jobs, reloadJob] = useJobs(baseUrl);
+  const [jobs, reloadJob] = useJobs();
   return (
     <PageSection>
       <JobTable data={jobs} onJobReload={reloadJob} />
