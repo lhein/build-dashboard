@@ -26,4 +26,4 @@ if __name__ == '__main__':
 		exit()
 
 	app.debug=True
-	app.run(host='0.0.0.0', use_reloader=True, port=9000, threaded=False) # Travis API doesn't like too fast parallel requests, turned threaded mode off
+	app.run(host='0.0.0.0', use_reloader=True, port=50005, threaded=False) # Travis API doesn't like too fast parallel requests, turned threaded mode off
