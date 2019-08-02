@@ -2,86 +2,64 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { PageSection } from '@patternfly/react-core';
 import { JobTable } from './JobTable';
 
-const Dashboard: React.FunctionComponent = () => {
-  let restAPIProvider = process.env.BACKEND;
-  restAPIProvider = 'http://0.0.0.0:50005';
-  if (!restAPIProvider) {
-    restAPIProvider = 'http://python-rest-api-fuse-dashboard.int.open.paas.redhat.com';
-  }
+async function callApi(url) {
+  const response = await fetch(url, { mode: 'cors' });
+  return await response.json();
+}
 
-  const JOBS_SERVICE_URL = restAPIProvider + '/ci-jobs/api/v1.0/jobs/';
-  const [jobNames, setJobNames] = useState( [] );
-  const readApi = useCallback(
+function useJobs(baseUrl: string): [any[], (jobName: string) => Promise<void>] {
+  const JOBS_SERVICE_URL = baseUrl + '/ci-jobs/api/v1.0/jobs/';
+  const [allJobs, setAllJobs] = useState<string[]>([]);
+  const [fetchedJobs, setFetchedJobs] = useState<{ [key: string]: any }>({});
+
+  const fetchAllJobs = useCallback(
     async function() {
-      const result = await fetch(JOBS_SERVICE_URL, { mode: 'cors' });
-      const resultObj = await result.json();
-      setJobNames(resultObj.jobs);
-    }
+      const { jobs } = await callApi(JOBS_SERVICE_URL);
+      setAllJobs(jobs);      
+    },
+    [JOBS_SERVICE_URL, setAllJobs]
+  );
+
+  const handleJobReload = useCallback(
+    async function (jobName) {
+      const { job } = await callApi(JOBS_SERVICE_URL + jobName);
+      setFetchedJobs(previousFetchedJobs => ({
+        ...previousFetchedJobs,
+        [job.name]: job
+      }));
+    },
+    [fetchedJobs, setFetchedJobs]
   );
   
   useEffect(() => {
-	readApi();
-
-	// set a 5 minute timer for refresh
-    const runner = setInterval(readApi, 300000); 
-	
-	return () => {
+    fetchAllJobs();
+    // set a 5 minute timer for refresh
+    const runner = setInterval(fetchAllJobs, 300000);
+    return () => {
       clearInterval(runner);
     };
-  }, [JOBS_SERVICE_URL, readApi]);
-
-  const [fetchedJobs, setFetchedJobs] = useState([]);
-  const handleJobReload = useCallback(
-	async function(jobName) {
-  	  let fj = [...fetchedJobs];
-      const JOB_SERVICE_URL = JOBS_SERVICE_URL + jobName;
-	  const result = await fetch(JOB_SERVICE_URL, { mode: 'cors' });
-	  const resultObj = await result.json();
-	  let job = resultObj.job;
-	
-	  let idx = fetchedJobs.findIndex( (element) => {
-		return element.name === job.name;
-	  });
-	  if (idx!==-1) {
-		fj.splice(idx, 1, job);
-	  } else {
-		fj.push(job);
-	  }  
-	  setFetchedJobs(fj);
-	}
-  );
-  // drop patches when the all jobs data changes, which means that the interval triggered
-  useEffect( () => {
-   setFetchedJobs( [] );
-  }, [jobNames, setFetchedJobs]);
-
-  const fetchJobData = useCallback(
-	async function() {
-	  for (let jobName of jobNames) {
-		  handleJobReload(jobName);
-	  }
-	},
-	[jobNames]
-  );
+  }, [fetchAllJobs]);
 
   useEffect(() => {
-    fetchJobData();
-  }, [jobNames, fetchJobData]);
-
+      allJobs.map(job => handleJobReload(job));
+    },
+    [allJobs]
+  );
+  
   // patch jobs
-  let patchedJobs = jobNames.map( (currentValue, index, arr) => {
-	  let idx = fetchedJobs.findIndex( (element) => {
-		return element.name === currentValue;
-	  });
-	  if (idx !== -1) {
-		  return fetchedJobs[idx];
-	  }
-	  return currentValue;
-  });
+  const patchedJobs = allJobs.map((job, index, arr) => 
+    fetchedJobs[job] ? fetchedJobs[job] : { name: job }
+  );
 
+  return [patchedJobs, handleJobReload];
+}
+
+const Dashboard: React.FunctionComponent = () => {
+  const baseUrl = !process.env.BACKEND ? 'http://0.0.0.0:50005' : 'http://python-rest-api-fuse-dashboard.int.open.paas.redhat.com';
+  const [jobs, reloadJob] = useJobs(baseUrl);
   return (
     <PageSection>
-      <JobTable data={patchedJobs} onJobReload={handleJobReload} />
+      <JobTable data={jobs} onJobReload={reloadJob} />
     </PageSection>
   );
 };
