@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+import time
 from travispy import TravisPy
 
 ENV_VAR_NAME = 'GITHUB_TRAVIS_TOKEN'
@@ -103,6 +104,7 @@ def getTravisJobStatus(repo, token, jobName):
 		jobUrl = 'https://travis-ci.org/' + r['slug'] + '/builds/'
 		return { 'name': jobName, 'buildNumber': str(last_build_number), 'buildStatus': buildResult, 'buildUrl': buildLink, 'jobUrl': jobUrl}
 	except Exception as e:
+		print(e)
 		return { 'name': jobName, 'buildNumber': 'UNKNOWN', 'buildStatus': 'UNKNOWN', 'buildUrl': '', 'jobUrl': 'https://travis-ci.org/' + repo + '/builds/'}
 
 def getJobSkeleton(jobname):
@@ -149,7 +151,9 @@ def getJob(jobName):
 	elif(isDevToolsJenkinsJob(jobName)):
 		job = getJenkinsJobStatus(devToolsJenkins, jobName)
 	elif(isTravisJob(jobName)):
+		time.sleep(1) # Travis API doesn't like fast requests
 		job = getTravisJobStatus(TRAVIS_JOBS[jobName], gitToken, jobName)
+		time.sleep(1) # Travis API doesn't like fast requests
 	else:
 		job = None
 	return job

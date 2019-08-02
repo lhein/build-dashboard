@@ -22,7 +22,7 @@ function useJobs(baseUrl: string): [any[], (jobName: string) => Promise<void>] {
 
   const handleJobReload = useCallback(
     async function (jobName) {
-      const { job } = await callApi(JOBS_SERVICE_URL + jobName);
+	  const { job } = await callApi(JOBS_SERVICE_URL + jobName);
       setFetchedJobs(previousFetchedJobs => ({
         ...previousFetchedJobs,
         [job.name]: job
