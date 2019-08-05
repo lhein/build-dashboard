@@ -5,7 +5,7 @@ RUN pacman -Syyu --noconfirm
 RUN pacman -S --noconfirm gcc git python python-pip nodejs yarn nano npm nginx 
 
 WORKDIR /app
-RUN git clone https://github.com/lhein/build-dashboard.git build-dashboard
+RUN git clone https://github.com/lhein/build-dashboard.git
 RUN pip install -r build-dashboard/requirements.txt
 
 WORKDIR /app/build-dashboard
