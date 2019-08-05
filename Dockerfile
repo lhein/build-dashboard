@@ -2,10 +2,10 @@ FROM archlinux/base
 MAINTAINER Lars Heinemann
 
 RUN pacman -Syyu --noconfirm
-RUN pacman -S --noconfirm gcc git python python-pip nodejs yarn nano nginx npm
+RUN pacman -S --noconfirm gcc git python python-pip nodejs yarn nano npm nginx 
 
 WORKDIR /app
-RUN git clone https://github.com/lhein/build-dashboard.git
+RUN git clone https://github.com/lhein/build-dashboard.git build-dashboard
 RUN pip install -r build-dashboard/requirements.txt
 
 WORKDIR /app/build-dashboard
@@ -34,7 +34,6 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log \
 EXPOSE 9000 50005
 
 ENV LANG=en_US.UTF-8 \
-	GITHUB_TRAVIS_TOKEN=secret \
-	BACKEND=secret
+	GITHUB_TRAVIS_TOKEN=secret
 
 CMD sh ./startService.sh
