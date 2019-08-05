@@ -31,7 +31,7 @@ RUN chown -R http:root /var/lib/nginx
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
  && ln -sf /dev/stderr /var/log/nginx/error.log
 
-EXPOSE 9000
+EXPOSE 9000 50005
 
 ENV LANG=en_US.UTF-8 \
 	GITHUB_TRAVIS_TOKEN=secret \
