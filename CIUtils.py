@@ -2,82 +2,90 @@ import os
 import json
 import requests
 import time
-from travispy import TravisPy
 
 ENV_VAR_NAME = 'GITHUB_TRAVIS_TOKEN'
 ENV_VAR_UNDEFINED = 'UNDEFINED'
-gitToken = os.getenv(ENV_VAR_NAME, ENV_VAR_UNDEFINED)
 
-fuseJenkins = 'https://fusesource-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
-devToolsJenkins = 'https://dev-platform-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
+FUSE_JENKINS = 'https://fusesource-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
+DEVTOOLS_JENKINS = 'https://dev-platform-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
+TRAVIS_API_HOST = 'https://api.travis-ci.org'
+TRAVIS_HOST = 'https://travis-ci.org/'
+TRAVIS = 'Travis'
+JENKINS = 'Jenkins'
 
-FUSE_JENKINS_JOBS = [
-    'jbosstools-fuse_master',
-    'jbosstools-fuse.sonar_master',
-    'jbosstools-fuse_master-jdk11',
-    'jbosstools-fuse_master-jdk12',
-    'jbosstools-fuse_PullRequest',
-    'jbosstools-fuse_PullRequest-OnlyTemplates',
-]
+JOBS = [
+	{ 'jobName': 'jbosstools-fuse_master', 						'ci': FUSE_JENKINS, 								'type': JENKINS },
+	{ 'jobName': 'jbosstools-fuse.sonar_master', 				'ci': FUSE_JENKINS, 								'type': JENKINS },
+	{ 'jobName': 'jbosstools-fuse_master-jdk11', 				'ci': FUSE_JENKINS, 								'type': JENKINS },
+	{ 'jobName': 'jbosstools-fuse_master-jdk12', 				'ci': FUSE_JENKINS, 								'type': JENKINS },
+	{ 'jobName': 'jbosstools-fuse_PullRequest', 				'ci': FUSE_JENKINS, 								'type': JENKINS },
+	{ 'jobName': 'jbosstools-fuse_PullRequest-OnlyTemplates', 	'ci': FUSE_JENKINS, 								'type': JENKINS },
+	{ 'jobName': 'jbosstools-fuse-extras_master', 				'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
+	{ 'jobName': 'jbosstools-fuse-extras-Pull-Request', 		'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
+	{ 'jobName': 'vscode-apache-camel_release', 				'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
+	{ 'jobName': 'vscode-wsdl2rest-release', 					'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
+	{ 'jobName': 'vscode-atlasmap-release', 					'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
+	{ 'jobName': 'vscode-camelk-release', 						'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
+	{ 'jobName': 'vscode-apache-camel-extension-pack-release', 	'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
+	{ 'jobName': 'camel-language-server', 						'ci': 'camel-tooling/camel-language-server', 		'type': TRAVIS },
+	{ 'jobName': 'camel-lsp-client-eclipse', 					'ci': 'camel-tooling/camel-lsp-client-eclipse', 	'type': TRAVIS },
+	{ 'jobName': 'camel-lsp-client-vscode', 					'ci': 'camel-tooling/camel-lsp-client-vscode', 		'type': TRAVIS },
+	{ 'jobName': 'camel-tooling-common', 						'ci': 'camel-tooling/camel-tooling-common', 		'type': TRAVIS },
+	{ 'jobName': 'camel-lsp-client-atom',						'ci': 'camel-tooling/camel-lsp-client-atom',		'type': TRAVIS },
+	{ 'jobName': 'vscode-wsdl2rest', 							'ci': 'camel-tooling/vscode-wsdl2rest', 			'type': TRAVIS },
+	{ 'jobName': 'vscode-atlasmap', 							'ci': 'jboss-fuse/vscode-atlasmap', 				'type': TRAVIS },
+	{ 'jobName': 'vscode-camelk', 								'ci': 'camel-tooling/vscode-camelk', 				'type': TRAVIS },
+	{ 'jobName': 'vscode-camel-extension-pack', 				'ci': 'camel-tooling/vscode-camel-extension-pack', 	'type': TRAVIS },
+];
 
-DEVTOOLS_JENKINS_JOBS = [
-    'jbosstools-fuse-extras_master',
-    'jbosstools-fuse-extras-Pull-Request',
-    'vscode-apache-camel_release',
-    'vscode-wsdl2rest-release',
-    'vscode-atlasmap-release',
-    'vscode-camelk-release',
-    'vscode-apache-camel-extension-pack-release'
-]
-
-TRAVIS_JOBS = {
-    'camel-language-server': 'camel-tooling/camel-language-server',
-    'camel-tooling-common': 'camel-tooling/camel-tooling-common',
-    'camel-lsp-client-eclipse': 'camel-tooling/camel-lsp-client-eclipse',
-    'camel-lsp-client-vscode': 'camel-tooling/camel-lsp-client-vscode',
-    'vscode-wsdl2rest': 'camel-tooling/vscode-wsdl2rest',
-    'vscode-atlasmap': 'jboss-fuse/vscode-atlasmap',
-    'vscode-camelk': 'camel-tooling/vscode-camelk',
-    'vscode-camel-extension-pack': 'camel-tooling/vscode-camel-extension-pack'
-}
+def getGithubToken():
+	return os.getenv(ENV_VAR_NAME, ENV_VAR_UNDEFINED)
 
 def hasGithubTokenDefined():
-	return gitToken != ENV_VAR_UNDEFINED
-
-def isFuseJenkinsJob(jobName):
-	job = [job for job in FUSE_JENKINS_JOBS if job == jobName]
-	return len(job) == 1
-
-def isDevToolsJenkinsJob(jobName):
-	job = [job for job in DEVTOOLS_JENKINS_JOBS if job == jobName]
-	return len(job) == 1
-
-def isTravisJob(jobName):
-	for job, repo in TRAVIS_JOBS.items():
-		if job == jobName:
-			return True
-	return False
+	return getGithubToken() != ENV_VAR_UNDEFINED
 
 def mapToJenkinsStates(buildResult):
-	mappedState = ""
+	mappedState = ''
+
 	if (buildResult == 'passed'):
-		mappedState = "SUCCESS"
+		mappedState = 'SUCCESS'
 	elif (buildResult == 'canceled'):
-		mappedState = "ABORTED"
+		mappedState = 'ABORTED'
 	elif (buildResult == 'failed'):
-		mappedState = "FAILURE"
+		mappedState = 'FAILURE'
 	elif (buildResult == 'errored'):
-		mappedState = "FAILURE"
+		mappedState = 'FAILURE'
 	else:
-		mappedState = "UNKNOWN"
+		mappedState = 'UNKNOWN'
+	
 	return mappedState
+
+def getTravisAccessToken():
+	gitToken = getGithubToken()
+	print("Github Token Found?")
+	print(hasGithubTokenDefined())
+	response = requests.post(TRAVIS_API_HOST + '/auth/github', data='{"github_token" : "' + gitToken + '"}', headers={"Accept": "application/vnd.travis-ci.2.1+json", "Content-Type": "application/json"}, verify=False, timeout=5)
+	authTokenJSON = json.loads(response.text)
+	return authTokenJSON['access_token']
+
+def fetchTravisStatus(url):
+	token = getTravisAccessToken()
+	
+	response = requests.get(url, headers={"Travis-API-Version": 3 ,"Authorization": "token " + token}, verify=False, timeout=5)
+	jobStatus = json.loads(response.text)
+	
+	return jobStatus
+
+def fetchJenkinsStatus(url):
+	response = requests.get(url, headers={"Accept": "application/json"}, verify=False, timeout=5)
+	jobStatus = json.loads(response.text)
+	return jobStatus
 
 def getJenkinsJobStatus(serverUrl, jobName):
 	try:
 		jobApiUrl = serverUrl + '/job/' + jobName + '/api/json'
 		jobUrl = serverUrl + '/job/' + jobName
-		response = requests.get(jobApiUrl, verify=False, timeout=5)
-		jobStatus = json.loads(response.text)
+		jobStatus = fetchJenkinsStatus(jobApiUrl)
 		color = jobStatus['color']
 		last_build_number = jobStatus['lastCompletedBuild']['number']
 		buildLink = jobStatus['lastCompletedBuild']['url']
@@ -92,68 +100,39 @@ def getJenkinsJobStatus(serverUrl, jobName):
 	except Exception as e:
 		return { 'name': jobName, 'buildNumber': 'UNKNOWN', 'buildStatus': 'UNKNOWN', 'buildUrl': '', 'jobUrl': jobUrl}
 
-def getTravisJobStatus(repo, token, jobName):
+def getTravisJobStatus(repo, jobName):
 	try:
-		t = TravisPy.github_auth(token)
-		r = t.repo(repo)
-		branch = t.branch('master', r.slug)
-		last_build_number = branch.number
-		build = t.builds(slug=r.slug, number=last_build_number, event_type='push').pop()
-		buildResult = mapToJenkinsStates(branch['state'])
-		buildLink = 'https://travis-ci.org/' + r['slug'] + '/builds/' + str(build['id'])
-		jobUrl = 'https://travis-ci.org/' + r['slug'] + '/builds/'
-		return { 'name': jobName, 'buildNumber': str(last_build_number), 'buildStatus': buildResult, 'buildUrl': buildLink, 'jobUrl': jobUrl}
+		parts = repo.split('/')
+		branch = fetchTravisStatus(TRAVIS_API_HOST + '/repo/' + parts[0] + '%2F' + parts[1] + '/branch/master')
+		lastBuild = branch['last_build'];
+		buildId = lastBuild['id'];
+		buildResult = mapToJenkinsStates(lastBuild['state']);
+		last_build_number = lastBuild['number'];
+		
+		buildLink = TRAVIS_HOST + repo + '/builds/' + str(buildId);
+		jobUrl = TRAVIS_HOST + repo + '/builds/';
+
+		return { 'name': jobName, 'buildNumber': str(last_build_number), 'buildStatus': buildResult, 'buildUrl': buildLink, 'jobUrl': jobUrl }
 	except Exception as e:
 		print(e)
-		return { 'name': jobName, 'buildNumber': 'UNKNOWN', 'buildStatus': 'UNKNOWN', 'buildUrl': '', 'jobUrl': 'https://travis-ci.org/' + repo + '/builds/'}
+		return { 'name': jobName, 'buildNumber': 'UNKNOWN', 'buildStatus': 'UNKNOWN', 'buildUrl': '', 'jobUrl': TRAVIS_HOST + repo + '/builds/' }
 
-def getJobSkeleton(jobname):
-	return { 'name': jobname, 'buildNumber': 'UNKNOWN', 'buildStatus': 'UNKNOWN', 'buildUrl': '', 'jobUrl': ''}
+def getJobSkeleton(jobName):
+	return { 'name': jobName, 'buildNumber': 'UNKNOWN', 'buildStatus': 'UNKNOWN', 'buildUrl': '', 'jobUrl': '' }
 
 def getAllJobNames():
-	names = []
-
-	# get all the results from the Fuse Jenkins
-	for job in FUSE_JENKINS_JOBS:
-		names.append( job )
-
-	# get all the results from the DevTools Jenkins
-	for job in DEVTOOLS_JENKINS_JOBS:
-		names.append( job )
-
-	# get all the results from Travis
-	for job, repo in TRAVIS_JOBS.items():
-		names.append( job )
-	
-	return names
-
-def getAllJobs():
-	job_list = []
-
-	# get all the results from the Fuse Jenkins
-	for job in FUSE_JENKINS_JOBS:
-		job_list.append(getJenkinsJobStatus(fuseJenkins, job))
-
-	# get all the results from the DevTools Jenkins
-	for job in DEVTOOLS_JENKINS_JOBS:
-		job_list.append(getJenkinsJobStatus(devToolsJenkins, job))
-
-	# get all the results from Travis
-	for job, repo in TRAVIS_JOBS.items():
-		job_list.append(getTravisJobStatus(repo, gitToken, job))
-	
-	return job_list
+	return list(map(lambda job: job['jobName'], JOBS))
 
 def getJob(jobName):
-	job = {}
-	if(isFuseJenkinsJob(jobName)):
-		job = getJenkinsJobStatus(fuseJenkins, jobName)
-	elif(isDevToolsJenkinsJob(jobName)):
-		job = getJenkinsJobStatus(devToolsJenkins, jobName)
-	elif(isTravisJob(jobName)):
+	job = list(filter(lambda job: job['jobName'] == jobName, JOBS))[0]
+	
+	if job['type'] == JENKINS:
+		jobStatus = getJenkinsJobStatus(job['ci'], jobName)
+	elif job['type'] == TRAVIS:
 		time.sleep(1) # Travis API doesn't like fast requests
-		job = getTravisJobStatus(TRAVIS_JOBS[jobName], gitToken, jobName)
+		jobStatus = getTravisJobStatus(job['ci'], jobName)
 		time.sleep(1) # Travis API doesn't like fast requests
 	else:
-		job = None
-	return job
+		jobStatus = None
+	
+	return jobStatus
