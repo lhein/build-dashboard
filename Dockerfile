@@ -5,7 +5,7 @@ RUN pacman -Syyu  --noconfirm
 RUN pacman -S  --noconfirm gcc git nano npm nginx yarn python python-pip nodejs
 
 WORKDIR /app
-RUN git clone  https://github.com/lhein/build-dashboard.git build-dashboard
+RUN git  clone https://github.com/lhein/build-dashboard.git    build-dashboard
 RUN pip install -r build-dashboard/requirements.txt
 
 WORKDIR /app/build-dashboard
@@ -14,11 +14,11 @@ RUN npm install yarn
 RUN yarn 
 RUN yarn build 
 
-COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY ./nginx.conf /etc/nginx/nginx.conf 
 RUN chmod -R a+rwx /app/build-dashboard &&\
     chmod +x /app/build-dashboard/startService.sh
 
-RUN cp  -R dist/* /usr/share/nginx/html/
+RUN cp  -R dist/* /usr/share/nginx/html/ 
 
 RUN mkdir -p /var/lib/nginx/client-body
 RUN mkdir -p /var/lib/nginx/fastcgi

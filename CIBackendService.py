@@ -21,9 +21,9 @@ def not_found(error):
 	return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == '__main__':
-	if (CIUtils.hasGithubTokenDefined() == False):
-		print('The environment variable ' + CIUtils.ENV_VAR_NAME + ' doesn\'t contain a valid GitHub OAuth Token! Exiting...')
+	if (CIUtils.hasTravisTokenDefined() == False):
+		print('The environment variable ' + CIUtils.ENV_VAR_NAME + ' doesn\'t contain a valid Travis Token! Exiting...')
 		exit()
 
 	app.debug=True
-	app.run(host='0.0.0.0', use_reloader=True, port=50005, threaded=False) # Travis API doesn't like too fast parallel requests, turned threaded mode off
+	app.run(host='0.0.0.0', use_reloader=True, port=50005, threaded=True)

@@ -3,7 +3,7 @@ import json
 import requests
 import time
 
-ENV_VAR_NAME = 'GITHUB_TRAVIS_TOKEN'
+ENV_VAR_NAME = 'TRAVIS_TOKEN'
 ENV_VAR_UNDEFINED = 'UNDEFINED'
 
 FUSE_JENKINS = 'https://fusesource-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
@@ -38,11 +38,11 @@ JOBS = [
 	{ 'jobName': 'vscode-camel-extension-pack', 				'ci': 'camel-tooling/vscode-camel-extension-pack', 	'type': TRAVIS },
 ];
 
-def getGithubToken():
+def getTravisToken():
 	return os.getenv(ENV_VAR_NAME, ENV_VAR_UNDEFINED)
 
-def hasGithubTokenDefined():
-	return getGithubToken() != ENV_VAR_UNDEFINED
+def hasTravisTokenDefined():
+	return getTravisToken() != ENV_VAR_UNDEFINED
 
 def mapToJenkinsStates(buildResult):
 	mappedState = ''
@@ -60,16 +60,10 @@ def mapToJenkinsStates(buildResult):
 	
 	return mappedState
 
-def getTravisAccessToken():
-	gitToken = getGithubToken()
-	response = requests.post(TRAVIS_API_HOST + '/auth/github', data='{"github_token" : "' + gitToken + '"}', headers={'Accept': 'application/vnd.travis-ci.2.1+json', 'Content-Type': 'application/json'}, verify=False, timeout=5)
-	authTokenJSON = json.loads(response.text)
-	return authTokenJSON['access_token']
-
 def fetchTravisStatus(url):
-	token = getTravisAccessToken()
+	token = getTravisToken()
 	
-	response = requests.get(url, headers={'Travis-API-Version': '3' ,'Authorization': 'token ' + token}, verify=False, timeout=5)
+	response = requests.get(url, headers={'User-Agent': 'CI-Dashboard', 'Travis-API-Version': '3' ,'Authorization': 'token ' + token}, verify=False, timeout=5)
 	jobStatus = json.loads(response.text)
 	
 	return jobStatus
@@ -127,9 +121,7 @@ def getJob(jobName):
 	if job['type'] == JENKINS:
 		jobStatus = getJenkinsJobStatus(job['ci'], jobName)
 	elif job['type'] == TRAVIS:
-		time.sleep(1) # Travis API doesn't like fast requests
 		jobStatus = getTravisJobStatus(job['ci'], jobName)
-		time.sleep(1) # Travis API doesn't like fast requests
 	else:
 		jobStatus = None
 	

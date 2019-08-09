@@ -8,7 +8,7 @@ async function callApi(url) {
 }
 
 function useJobs(): [any[], (jobName: string) => Promise<void>] {
-  const JOBS_SERVICE_URL = 'http://api-fuse-dashboard.int.open.paas.redhat.com/ci-jobs/api/v1.0/jobs/';
+  const JOBS_SERVICE_URL = '/ci-jobs/api/v1.0/jobs/';
   const [allJobs, setAllJobs] = useState<string[]>([]);
   const [fetchedJobs, setFetchedJobs] = useState<{ [key: string]: any }>({});
 
