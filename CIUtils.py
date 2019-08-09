@@ -62,22 +62,20 @@ def mapToJenkinsStates(buildResult):
 
 def getTravisAccessToken():
 	gitToken = getGithubToken()
-	print("Github Token Found?")
-	print(hasGithubTokenDefined())
-	response = requests.post(TRAVIS_API_HOST + '/auth/github', data='{"github_token" : "' + gitToken + '"}', headers={"Accept": "application/vnd.travis-ci.2.1+json", "Content-Type": "application/json"}, verify=False, timeout=5)
+	response = requests.post(TRAVIS_API_HOST + '/auth/github', data='{"github_token" : "' + gitToken + '"}', headers={'Accept': 'application/vnd.travis-ci.2.1+json', 'Content-Type': 'application/json'}, verify=False, timeout=5)
 	authTokenJSON = json.loads(response.text)
 	return authTokenJSON['access_token']
 
 def fetchTravisStatus(url):
 	token = getTravisAccessToken()
 	
-	response = requests.get(url, headers={"Travis-API-Version": 3 ,"Authorization": "token " + token}, verify=False, timeout=5)
+	response = requests.get(url, headers={'Travis-API-Version': '3' ,'Authorization': 'token ' + token}, verify=False, timeout=5)
 	jobStatus = json.loads(response.text)
 	
 	return jobStatus
 
 def fetchJenkinsStatus(url):
-	response = requests.get(url, headers={"Accept": "application/json"}, verify=False, timeout=5)
+	response = requests.get(url, headers={'Accept': 'application/json'}, verify=False, timeout=5)
 	jobStatus = json.loads(response.text)
 	return jobStatus
 
