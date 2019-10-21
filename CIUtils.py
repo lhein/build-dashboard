@@ -7,6 +7,7 @@ ENV_VAR_NAME = 'TRAVIS_TOKEN'
 ENV_VAR_UNDEFINED = 'UNDEFINED'
 
 FUSE_JENKINS = 'https://fusesource-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
+FUSE_QE_JENKINS = 'https://jbdsis-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
 DEVTOOLS_JENKINS = 'https://dev-platform-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
 TRAVIS_API_HOST = 'https://api.travis-ci.org'
 TRAVIS_HOST = 'https://travis-ci.org/'
@@ -22,6 +23,7 @@ JOBS = [
 	{ 'jobName': 'jbosstools-fuse_PullRequest-OnlyTemplates', 	'ci': FUSE_JENKINS, 								'type': JENKINS },
 	{ 'jobName': 'jbosstools-fuse-extras_master', 				'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
 	{ 'jobName': 'jbosstools-fuse-extras-Pull-Request', 		'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
+	{ 'jobName': 'fuse-smoke', 									'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
 	{ 'jobName': 'vscode-apache-camel_release', 				'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
 	{ 'jobName': 'vscode-wsdl2rest-release', 					'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
 	{ 'jobName': 'vscode-atlasmap-release', 					'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
@@ -36,6 +38,9 @@ JOBS = [
 	{ 'jobName': 'vscode-atlasmap', 							'ci': 'jboss-fuse/vscode-atlasmap', 				'type': TRAVIS },
 	{ 'jobName': 'vscode-camelk', 								'ci': 'camel-tooling/vscode-camelk', 				'type': TRAVIS },
 	{ 'jobName': 'vscode-camel-extension-pack', 				'ci': 'camel-tooling/vscode-camel-extension-pack', 	'type': TRAVIS },
+	{ 'jobName': 'vscode_atlasmap_pipeline', 					'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
+	{ 'jobName': 'vscode_lsp_pipeline', 						'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
+	{ 'jobName': 'vscode_wsdl2rest_pipeline', 					'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
 ];
 
 def getTravisToken():
