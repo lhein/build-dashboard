@@ -39,6 +39,7 @@ JOBS = [
 	{ 'jobName': 'vscode-camelk', 								'ci': 'camel-tooling/vscode-camelk', 				'type': TRAVIS },
 	{ 'jobName': 'vscode-camel-extension-pack', 				'ci': 'camel-tooling/vscode-camel-extension-pack', 	'type': TRAVIS },
 	{ 'jobName': 'vscode_atlasmap_pipeline', 					'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
+  { 'jobName': 'vscode_camelk_pipeline', 					'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
 	{ 'jobName': 'vscode_lsp_pipeline', 						'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
 	{ 'jobName': 'vscode_wsdl2rest_pipeline', 					'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
 ];
@@ -62,15 +63,15 @@ def mapToJenkinsStates(buildResult):
 		mappedState = 'FAILURE'
 	else:
 		mappedState = 'UNKNOWN'
-	
+
 	return mappedState
 
 def fetchTravisStatus(url):
 	token = getTravisToken()
-	
+
 	response = requests.get(url, headers={'User-Agent': 'CI-Dashboard', 'Travis-API-Version': '3' ,'Authorization': 'token ' + token}, verify=False, timeout=5)
 	jobStatus = json.loads(response.text)
-	
+
 	return jobStatus
 
 def fetchJenkinsStatus(url):
@@ -105,7 +106,7 @@ def getTravisJobStatus(repo, jobName):
 		buildId = lastBuild['id'];
 		buildResult = mapToJenkinsStates(lastBuild['state']);
 		last_build_number = lastBuild['number'];
-		
+
 		buildLink = TRAVIS_HOST + repo + '/builds/' + str(buildId);
 		jobUrl = TRAVIS_HOST + repo + '/builds/';
 
@@ -122,12 +123,12 @@ def getAllJobNames():
 
 def getJob(jobName):
 	job = list(filter(lambda job: job['jobName'] == jobName, JOBS))[0]
-	
+
 	if job['type'] == JENKINS:
 		jobStatus = getJenkinsJobStatus(job['ci'], jobName)
 	elif job['type'] == TRAVIS:
 		jobStatus = getTravisJobStatus(job['ci'], jobName)
 	else:
 		jobStatus = None
-	
+
 	return jobStatus
