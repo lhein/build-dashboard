@@ -28,6 +28,7 @@ JOBS = [
 	{ 'jobName': 'vscode-wsdl2rest-release', 					'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
 	{ 'jobName': 'vscode-atlasmap-release', 					'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
 	{ 'jobName': 'vscode-camelk-release', 						'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
+  { 'jobName': 'vscode-datavirt_release', 						'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
 	{ 'jobName': 'vscode-apache-camel-extension-pack-release', 	'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
 	{ 'jobName': 'camel-language-server', 						'ci': 'camel-tooling/camel-language-server', 		'type': TRAVIS },
 	{ 'jobName': 'camel-lsp-client-eclipse', 					'ci': 'camel-tooling/camel-lsp-client-eclipse', 	'type': TRAVIS },
