@@ -1,4 +1,4 @@
-FROM archlinux/base
+FROM archlinux
 MAINTAINER Lars Heinemann
 
 RUN pacman -Syyu  --noconfirm
