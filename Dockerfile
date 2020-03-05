@@ -1,8 +1,7 @@
 FROM archlinux
 MAINTAINER Lars Heinemann
 
-RUN pacman -Sy --noconfirm archlinux-keyring
-RUN pacman -Syyu  --noconfirm
+RUN pacman -Sy --noconfirm archlinux-keyring && pacman -Syyu --noconfirm
 RUN pacman -S  --noconfirm gcc git nano npm nginx yarn python python-pip nodejs
 
 WORKDIR /app
