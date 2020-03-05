@@ -38,6 +38,7 @@ JOBS = [
 	{ 'jobName': 'vscode-wsdl2rest', 							'ci': 'camel-tooling/vscode-wsdl2rest', 			'type': TRAVIS },
 	{ 'jobName': 'vscode-atlasmap', 							'ci': 'jboss-fuse/vscode-atlasmap', 				'type': TRAVIS },
 	{ 'jobName': 'vscode-camelk', 								'ci': 'camel-tooling/vscode-camelk', 				'type': TRAVIS },
+  { 'jobName': 'vscode-datavirt',               'ci': 'jboss-fuse/vscode-datavirt',         'type': TRAVIS },
 	{ 'jobName': 'vscode-camel-extension-pack', 				'ci': 'camel-tooling/vscode-camel-extension-pack', 	'type': TRAVIS },
 	{ 'jobName': 'vscode_atlasmap_pipeline', 					'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
   { 'jobName': 'vscode_camelk_pipeline', 					'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
