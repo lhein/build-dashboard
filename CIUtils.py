@@ -7,7 +7,7 @@ ENV_VAR_NAME = 'TRAVIS_TOKEN'
 ENV_VAR_UNDEFINED = 'UNDEFINED'
 
 FUSE_JENKINS = 'https://fusesource-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
-FUSE_QE_JENKINS = 'https://jbdsis-qe-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
+FUSE_QE_JENKINS = 'https://master-jenkins-csb-fusetools-qe.cloud.paas.psi.redhat.com'
 DEVTOOLS_JENKINS = 'https://dev-platform-jenkins.rhev-ci-vms.eng.rdu2.redhat.com'
 TRAVIS_API_HOST = 'https://api.travis-ci.org'
 TRAVIS_HOST = 'https://travis-ci.org/'
@@ -28,7 +28,7 @@ JOBS = [
 	{ 'jobName': 'vscode-wsdl2rest-release', 					'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
 	{ 'jobName': 'vscode-atlasmap-release', 					'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
 	{ 'jobName': 'vscode-camelk-release', 						'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
-  { 'jobName': 'vscode-datavirt_release', 						'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
+	{ 'jobName': 'vscode-datavirt_release', 					'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
 	{ 'jobName': 'vscode-apache-camel-extension-pack-release', 	'ci': DEVTOOLS_JENKINS, 							'type': JENKINS },
 	{ 'jobName': 'camel-language-server', 						'ci': 'camel-tooling/camel-language-server', 		'type': TRAVIS },
 	{ 'jobName': 'camel-lsp-client-eclipse', 					'ci': 'camel-tooling/camel-lsp-client-eclipse', 	'type': TRAVIS },
@@ -38,12 +38,14 @@ JOBS = [
 	{ 'jobName': 'vscode-wsdl2rest', 							'ci': 'camel-tooling/vscode-wsdl2rest', 			'type': TRAVIS },
 	{ 'jobName': 'vscode-atlasmap', 							'ci': 'jboss-fuse/vscode-atlasmap', 				'type': TRAVIS },
 	{ 'jobName': 'vscode-camelk', 								'ci': 'camel-tooling/vscode-camelk', 				'type': TRAVIS },
-  { 'jobName': 'vscode-datavirt',               'ci': 'jboss-fuse/vscode-datavirt',         'type': TRAVIS },
+	{ 'jobName': 'vscode-datavirt',               				'ci': 'jboss-fuse/vscode-datavirt',         		'type': TRAVIS },
 	{ 'jobName': 'vscode-camel-extension-pack', 				'ci': 'camel-tooling/vscode-camel-extension-pack', 	'type': TRAVIS },
-	{ 'jobName': 'vscode_atlasmap_pipeline', 					'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
-  { 'jobName': 'vscode_camelk_pipeline', 					'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
-	{ 'jobName': 'vscode_lsp_pipeline', 						'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
-	{ 'jobName': 'vscode_wsdl2rest_pipeline', 					'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
+	{ 'jobName': 'vscode-atlasmap-pipeline', 					'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
+	{ 'jobName': 'vscode-camelk-pipeline', 						'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
+	{ 'jobName': 'vscode-lsp-pipeline', 						'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
+	{ 'jobName': 'vscode-wsdl2rest-pipeline', 					'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
+	{ 'jobName': 'vscode-project-initializer-pipeline', 		'ci': FUSE_QE_JENKINS, 								'type': JENKINS },
+	{ 'jobName': 'lsp-eclipse-client-nightly-matrix', 			'ci': FUSE_QE_JENKINS, 								'type': JENKINS }
 ];
 
 def getTravisToken():
