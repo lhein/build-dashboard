@@ -17,7 +17,6 @@ JENKINS = 'Jenkins'
 JOBS = [
 	{ 'jobName': 'jbosstools-fuse_master', 						'ci': FUSE_JENKINS, 								'type': JENKINS },
 	{ 'jobName': 'jbosstools-fuse.sonar_master', 				'ci': FUSE_JENKINS, 								'type': JENKINS },
-	{ 'jobName': 'jbosstools-fuse_master-jdk11', 				'ci': FUSE_JENKINS, 								'type': JENKINS },
 	{ 'jobName': 'jbosstools-fuse_master-jdk12', 				'ci': FUSE_JENKINS, 								'type': JENKINS },
 	{ 'jobName': 'jbosstools-fuse_PullRequest', 				'ci': FUSE_JENKINS, 								'type': JENKINS },
 	{ 'jobName': 'jbosstools-fuse_PullRequest-OnlyTemplates', 	'ci': FUSE_JENKINS, 								'type': JENKINS },
