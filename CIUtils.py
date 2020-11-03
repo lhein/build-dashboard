@@ -104,13 +104,13 @@ def getJenkinsJobStatus(serverUrl, jobName):
 def getTravisJobStatus(repo, jobName):
 	try:
 		parts = repo.split('/')
-		branch = fetchTravisStatus(TRAVIS_API_HOST + '/repo/' + parts[0] + '%2F' + parts[1] + '/branch/master')
+		branch = fetchTravisStatus(TRAVIS_API_HOST + '/repo/github/' + parts[0] + '%2F' + parts[1] + '/branch/master')
 		lastBuild = branch['last_build']
 		buildId = lastBuild['id']
 		buildResult = mapToJenkinsStates(lastBuild['state'])
 		last_build_number = lastBuild['number']
 
-		jobUrl = TRAVIS_HOST + repo + '/builds/'
+		jobUrl = TRAVIS_HOST + 'github/' + repo + '/builds/'
 		buildLink = jobUrl + str(buildId)
 
 
