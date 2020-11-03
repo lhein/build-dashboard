@@ -2,7 +2,7 @@ FROM archlinux
 MAINTAINER Lars Heinemann
 
 RUN pacman -Sy --noconfirm archlinux-keyring && pacman -Syyu --noconfirm
-RUN pacman -S  --noconfirm gcc git nano npm nginx yarn python python-pip nodejs
+RUN pacman -S  --noconfirm gcc git nano npm nginx yarn nodejs python python-pip
 
 WORKDIR /app
 RUN git  clone https://github.com/lhein/build-dashboard.git    build-dashboard
