@@ -83,6 +83,8 @@ def fetchJenkinsStatus(url):
 def getJenkinsJobStatus(serverUrl, jobName):
 	try:
 		jobUrl = serverUrl + '/job/Fuse/job/VSCode/job/' + jobName
+		if (serverUrl != NEW_DEVTOOLS_JENKINS):
+			jobApiUrl = serverUrl + '/job/' + jobName + '/api/json'
 		jobApiUrl = jobUrl + '/api/json'
 		jobStatus = fetchJenkinsStatus(jobApiUrl)
 		color = jobStatus['color']
